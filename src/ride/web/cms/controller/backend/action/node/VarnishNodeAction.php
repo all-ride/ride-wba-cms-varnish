@@ -54,6 +54,7 @@ class VarnishNodeAction extends AbstractNodeAction {
 
         $data = array(
             'maxAge' => $node->getHeader($locale, 's-maxage'),
+            'noCache' => $node->get('cache.disabled')
         );
 
         $formHeaders = $this->createFormBuilder($data);
