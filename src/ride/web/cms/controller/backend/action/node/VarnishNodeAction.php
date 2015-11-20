@@ -55,15 +55,15 @@ class VarnishNodeAction extends AbstractNodeAction {
         $data = array(
             'sharedMaxAge' => $node->getHeader($locale, 's-maxage'),
             'maxAge' => $node->getHeader($locale, 'max-age'),
-            'noCache' => $node->getLocalized($locale, 'cache.disabled'),
-            'maxAge-show' => $node->getLocalized($locale, 'maxage.show'),
-            'sharedMaxAge-show' => $node->getLocalized($locale, 'sharedmaxage.show')
+            'noCache' => $node->get('cache.disabled'),
+            'maxAgeShow' => $node->get('maxage.show'),
+            'sharedMaxAgeShow' => $node->get('sharedmaxage.show')
         );
 
         $formHeaders = $this->createFormBuilder($data);
         $formHeaders->setAction('headers');
 
-        $formHeaders->addRow('maxAge-show', 'option', array(
+        $formHeaders->addRow('maxAgeShow', 'option', array(
             'label' => $translator->translate('label.age.max.show'),
             'description' => $translator->translate('label.age.max.show.description'),
             'attributes' => array(
@@ -83,7 +83,7 @@ class VarnishNodeAction extends AbstractNodeAction {
             ),
         ));
 
-        $formHeaders->addRow('sharedMaxAge-show', 'option', array(
+        $formHeaders->addRow('sharedMaxAgeShow', 'option', array(
             'label' => $translator->translate('label.age.sharedmax.show'),
             'description' => $translator->translate('label.age.sharedmax.show.description'),
             'attributes' => array(
@@ -117,11 +117,11 @@ class VarnishNodeAction extends AbstractNodeAction {
 
                 $data = $formHeaders->getData();
 
-                $node->setLocalized($locale, 'cache.disabled', $data['noCache'] ? $data['noCache'] : 0);
-                $node->setLocalized($locale, 'maxage.show', $data['maxAge-show'] ? $data['maxAge-show'] : 0);
-                $node->setLocalized($locale, 'sharedmaxage.show', $data['sharedMaxAge-show'] ? $data['sharedMaxAge-show'] : 0);
-                $node->setHeader($locale, 's-maxage', $data['sharedMaxAge-show'] ? $data['sharedMaxAge'] : null);
-                $node->setHeader($locale, 'max-age', $data['maxAge-show'] ? $data['maxAge'] : null);
+                $node->set('cache.disabled', $data['noCache'] ? $data['noCache'] : 0);
+                $node->set('maxage.show', $data['maxAgeShow'] ? $data['maxAgeShow'] : 0);
+                $node->set('sharedmaxage.show', $data['sharedMaxAgeShow'] ? $data['sharedMaxAgeShow'] : 0);
+                $node->setHeader($locale, 's-maxage', $data['sharedMaxAgeShow'] ? $data['sharedMaxAge'] : null);
+                $node->setHeader($locale, 'max-age', $data['maxAgeShow'] ? $data['maxAge'] : null);
                 $node->setHeader($locale, 'Expires', 'Thu, 05 Apr 1984 18:00:00 GMT');
 
                 $cms->saveNode($node, "Set cache properties for " . $node->getName());
