@@ -9,6 +9,6 @@
     "title.cache.clear": "Cache ledigen",
     "title.headers": "Headers",
     "title.node.varnish": "Cache",
-    "label.no.cache": "Geen cache",
-    "label.no.cache.description": "Indien aangevinkt zal deze pagina nooit gecached worden"
+    "label.no.cache": "Geen browser cache",
+    "label.no.cache.description": "Indien aangevinkt zal deze pagina nooit gecached worden door de browser"
 }
