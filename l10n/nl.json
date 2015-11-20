@@ -5,7 +5,7 @@
     "label.age.max.show": "Max-age header",
     "label.age.max.show.description": "Voeg een max-age header toe",
     "label.age.sharedmax": "shared-max-age",
-    "label.age.sharedmax.description": "max",
+    "label.age.sharedmax.description": "Maximum cache tijd in seconden voor deze pagina",
     "label.age.sharedmax.show": "Shared-max-age header",
     "label.age.sharedmax.show.description": "Voeg een shared-max-age header toe",
     "label.confirm.varnish.clear": "Ben je zeker dat je de cache wenst te ledigen voor deze node?",
