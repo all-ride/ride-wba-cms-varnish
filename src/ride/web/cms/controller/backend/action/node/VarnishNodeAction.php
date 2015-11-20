@@ -118,10 +118,10 @@ class VarnishNodeAction extends AbstractNodeAction {
                 $data = $formHeaders->getData();
 
                 $node->setLocalized($locale, 'cache.disabled', $data['noCache']);
-                $node->setLocalized($locale, 'maxage.show', $data['maxAge-show']);
-                $node->setLocalized($locale, 'sharedmaxage.show', $data['sharedMaxAge-show']);
-                $node->setHeader($locale, 's-maxage', $data['sharedMaxAge']);
-                $node->setHeader($locale, 'max-age', $data['maxAge']);
+                $node->setLocalized($locale, 'maxage.show', $data['maxAge-show'] ? $data['maxAge-show'] : 0);
+                $node->setLocalized($locale, 'sharedmaxage.show', $data['sharedMaxAge-show'] ? $data['sharedMaxAge-show'] : 0);
+                $node->setHeader($locale, 's-maxage', $data['sharedMaxAge-show'] ? $data['sharedMaxAge'] : null);
+                $node->setHeader($locale, 'max-age', $data['maxAge-show'] ? $data['maxAge'] : null);
                 $node->setHeader($locale, 'Expires', 'Wed, 06 Jul 1983 5:00:00 GMT');
 
                 $cms->saveNode($node, "Set cache properties for " . $node->getName());
