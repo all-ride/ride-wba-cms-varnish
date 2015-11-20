@@ -1,14 +1,21 @@
 {
     "button.clear": "Ledigen",
-    "label.age.max": "Max-age",
-    "label.age.max.description": "Maximum cache leeftijd van deze pagina in seconden",
+    "label.age.max": "max-age",
+    "label.age.max.description": "Maximum cache tijd in seconden voor deze pagina",
+    "label.age.max.show": "Max-age header",
+    "label.age.max.show.description": "Voeg een max-age header toe",
+    "label.age.sharedmax": "shared-max-age",
+    "label.age.sharedmax.description": "max",
+    "label.age.sharedmax.show": "Shared-max-age header",
+    "label.age.sharedmax.show.description": "Voeg een shared-max-age header toe",
     "label.confirm.varnish.clear": "Ben je zeker dat je de cache wenst te ledigen voor deze node?",
-    "label.confirm.varnish.clear.recursive": "Ledig cache voor de onderliggende pagina's",
+    "label.confirm.varnish.clear.recursive": "Ledig cache ook voor de onderliggende pagina's",
+    "label.no.cache": "Geen browser cache",
+    "label.no.cache.description": "Indien aangevinkt zal deze pagina nooit gecached worden door de browser",
     "label.node.action.varnish": "Cache",
+    "label.sharedage.max": "shared-max-age",
     "success.node.varnish.cleared": "De cache werd geledigd voor %node%",
     "title.cache.clear": "Cache ledigen",
-    "title.headers": "Headers",
-    "title.node.varnish": "Cache",
-    "label.no.cache": "Geen browser cache",
-    "label.no.cache.description": "Indien aangevinkt zal deze pagina nooit gecached worden door de browser"
+    "title.headers": "Voeg headers toe",
+    "title.node.varnish": "Cache"
 }

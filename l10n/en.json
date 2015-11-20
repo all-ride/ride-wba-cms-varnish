@@ -1,10 +1,19 @@
 {
     "button.clear": "Clear",
+    "label.age.max": "max-age",
+    "label.age.max.description": "Maximum cache age for this page in seconds",
+    "label.age.max.show": "Use max-age header",
+    "label.age.max.show.description": "Add a max-age header",
+    "label.age.sharedmax.description": "Maximum cache age for this page in seconds",
+    "label.age.sharedmax.show": "Use shared-max-age header",
+    "label.age.sharedmax.show.description": "Add a shared-max-age header",
     "label.confirm.varnish.clear": "Are you sure you want to clear the cache of this node?",
-    "label.confirm.varnish.clear.recursive": "Clear all the child pages",
-    "label.node.action.varnish": "Cache",
-    "success.node.varnish.cleared": "The cache has been cleared for %node%",
-    "title.node.varnish": "Cache",
+    "label.confirm.varnish.clear.recursive": "Also clear all the child pages",
     "label.no.cache": "No browser caching",
-    "label.no.cache.description": "If checked, this page will never be cached by the browser"
+    "label.no.cache.description": "If checked, this page will never be cached by the browser",
+    "label.node.action.varnish": "Cache",
+    "label.sharedage.max": "shared-max-age",
+    "success.node.varnish.cleared": "The cache has been cleared for %node%",
+    "title.headers": "Add headers",
+    "title.node.varnish": "Cache"
 }
