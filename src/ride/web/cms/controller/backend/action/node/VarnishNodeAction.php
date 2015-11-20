@@ -56,8 +56,8 @@ class VarnishNodeAction extends AbstractNodeAction {
             'sharedMaxAge' => $node->getHeader($locale, 's-maxage'),
             'maxAge' => $node->getHeader($locale, 'max-age'),
             'noCache' => $node->get('cache.disabled'),
-            'maxAgeShow' => $node->get('maxage.show'),
-            'sharedMaxAgeShow' => $node->get('sharedmaxage.show')
+            'maxAgeShow' => $node->get('cache.maxage.enabled'),
+            'sharedMaxAgeShow' => $node->get('cache.sharedmaxage.enabled')
         );
 
         $formHeaders = $this->createFormBuilder($data);
@@ -118,8 +118,8 @@ class VarnishNodeAction extends AbstractNodeAction {
                 $data = $formHeaders->getData();
 
                 $node->set('cache.disabled', $data['noCache'] ? $data['noCache'] : 0);
-                $node->set('maxage.show', $data['maxAgeShow'] ? $data['maxAgeShow'] : 0);
-                $node->set('sharedmaxage.show', $data['sharedMaxAgeShow'] ? $data['sharedMaxAgeShow'] : 0);
+                $node->set('cache.maxage.enabled', $data['maxAgeShow'] ? $data['maxAgeShow'] : 0);
+                $node->set('cache.sharedmaxage.enabled', $data['sharedMaxAgeShow'] ? $data['sharedMaxAgeShow'] : 0);
                 $node->setHeader($locale, 's-maxage', $data['sharedMaxAgeShow'] ? $data['sharedMaxAge'] : null);
                 $node->setHeader($locale, 'max-age', $data['maxAgeShow'] ? $data['maxAge'] : null);
                 $node->setHeader($locale, 'Expires', 'Thu, 05 Apr 1984 18:00:00 GMT');
