@@ -53,8 +53,8 @@ class VarnishNodeAction extends AbstractNodeAction {
         }
 
         $data = array(
-            'sharedMaxAge' => $node->getHeader($locale, 'maxage'),
-            'maxAge' => $node->getHeader($locale, 's-maxage'),
+            'sharedMaxAge' => $node->getHeader($locale, 's-maxage'),
+            'maxAge' => $node->getHeader($locale, 'max-age'),
             'noCache' => $node->getLocalized($locale, 'cache.disabled'),
             'maxAge-show' => $node->getLocalized($locale, 'maxage.show'),
             'sharedMaxAge-show' => $node->getLocalized($locale, 'sharedmaxage.show')
@@ -121,7 +121,7 @@ class VarnishNodeAction extends AbstractNodeAction {
                 $node->setLocalized($locale, 'maxage.show', $data['maxAge-show']);
                 $node->setLocalized($locale, 'sharedmaxage.show', $data['sharedMaxAge-show']);
                 $node->setHeader($locale, 's-maxage', $data['sharedMaxAge']);
-                $node->setHeader($locale, 'maxage', $data['maxAge']);
+                $node->setHeader($locale, 'max-age', $data['maxAge']);
                 $node->setHeader($locale, 'Expires', 'Wed, 06 Jul 1983 5:00:00 GMT');
 
                 $cms->saveNode($node, "Set cache properties for " . $node->getName());
