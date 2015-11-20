@@ -4,5 +4,7 @@
     "label.confirm.varnish.clear.recursive": "Clear all the child pages",
     "label.node.action.varnish": "Cache",
     "success.node.varnish.cleared": "The cache has been cleared for %node%",
-    "title.node.varnish": "Cache"
+    "title.node.varnish": "Cache",
+    "label.no.cache": "No cache",
+    "label.no.cache.description": "If checked, this page will never be cached"
 }

@@ -68,6 +68,12 @@ class VarnishNodeAction extends AbstractNodeAction {
             ),
         ));
 
+        $formHeaders->addRow('noCache', 'option', array(
+            'label' => $translator->translate('label.no.cache'),
+            'description' => $translator->translate('label.no.cache.description')
+            )
+        );
+
         $formHeaders = $formHeaders->build();
         if ($formHeaders->isSubmitted()) {
             try {
