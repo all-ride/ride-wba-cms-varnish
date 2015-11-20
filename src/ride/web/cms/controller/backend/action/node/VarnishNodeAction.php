@@ -84,7 +84,7 @@ class VarnishNodeAction extends AbstractNodeAction {
 
                 $node->set('cache.disabled', $data['noCache']);
                 $node->setHeader($locale, 's-maxage', $data['maxAge']);
-                $node->setHeader($locale, 'Expires', 'Wed, 06 Jul 1983 5:00:00 GMT');
+                $node->setHeader($locale, 'Expires', 'Wed, 06 Jul 1983 5:00:00 GMT'); // Mr. Kaya's b-day!
 
                 $cms->saveNode($node, "Set cache properties for " . $node->getName());
 
