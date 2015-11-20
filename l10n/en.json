@@ -1,0 +1,8 @@
+{
+    "button.clear": "Clear",
+    "label.confirm.varnish.clear": "Are you sure you want to clear the cache of this node?",
+    "label.confirm.varnish.clear.recursive": "Clear all the child pages",
+    "label.node.action.varnish": "Cache",
+    "success.node.varnish.cleared": "The cache has been cleared for %node%",
+    "title.node.varnish": "Cache"
+}

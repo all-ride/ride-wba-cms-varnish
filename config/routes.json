@@ -1,0 +1,10 @@
+{
+    "routes": [
+        {
+            "path": "/sites/%site%/%revision%/%locale%/nodes/%node%/varnish",
+            "controller": "ride\\web\\cms\\controller\\backend\\action\\node\\VarnishNodeAction",
+            "action": "indexAction",
+            "id": "cms.node.varnish"
+        }
+    ]
+}

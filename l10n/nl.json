@@ -1,0 +1,12 @@
+{
+    "button.clear": "Ledigen",
+    "label.age.max": "Max-age",
+    "label.age.max.description": "Maximum cache leeftijd van deze pagina in seconden",
+    "label.confirm.varnish.clear": "Ben je zeker dat je de cache wenst te ledigen voor deze node?",
+    "label.confirm.varnish.clear.recursive": "Ledig cache voor de onderliggende pagina's",
+    "label.node.action.varnish": "Cache",
+    "success.node.varnish.cleared": "De cache werd geledigd voor %node%",
+    "title.cache.clear": "Cache ledigen",
+    "title.headers": "Headers",
+    "title.node.varnish": "Cache"
+}
