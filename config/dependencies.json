@@ -1,0 +1,47 @@
+{
+    "dependencies": [
+        {
+            "class": "ride\\web\\cms\\controller\\backend\\action\\node\\NodeActionManager",
+            "id": "generic",
+            "extends": "generic",
+            "calls": [
+                {
+                    "method": "removeNodeAction",
+                    "arguments": [
+                        {
+                            "name": "name",
+                            "type": "scalar",
+                            "properties": {
+                                "value": "advanced"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "method": "addNodeAction",
+                    "arguments": [
+                        {
+                            "name": "nodeAction",
+                            "type": "dependency",
+                            "properties": {
+                                "interface": "ride\\web\\cms\\controller\\backend\\action\\node\\VarnishNodeAction"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "method": "addNodeAction",
+                    "arguments": [
+                        {
+                            "name": "nodeAction",
+                            "type": "dependency",
+                            "properties": {
+                                "interface": "ride\\web\\cms\\controller\\backend\\action\\node\\AdvancedNodeAction"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
