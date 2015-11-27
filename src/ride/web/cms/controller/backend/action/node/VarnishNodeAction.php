@@ -26,6 +26,23 @@ class VarnishNodeAction extends AbstractNodeAction {
      */
     const ROUTE = 'cms.node.varnish';
 
+    private $times = array(
+        60, // 1 minute
+        300, // 5 minutes
+        900, // 15 minutes
+        1800, // 30 minutes
+        3600, // 1 hour
+        10800, // 3 hours
+        21600, // 6 hours
+        43200, // 12 hours
+        86400, // 1 day
+        604800, // 1 week
+        2628000, // 1 month
+        7884000, // 3 months
+        15768000, // 6 months
+        31536000, // 1 year
+    );
+
     /**
      * Perform the structure node action
      */
@@ -41,6 +58,7 @@ class VarnishNodeAction extends AbstractNodeAction {
             $url = $this->request->getBaseUrl();
         }
 
+        $cache = $node->get('cache.target', 'inherit', false);
         $translator = $this->getTranslator();
         $referer = $this->request->getQueryParameter('referer');
         if (!$referer) {
@@ -52,63 +70,44 @@ class VarnishNodeAction extends AbstractNodeAction {
             ));
         }
 
+        // Set data
         $data = array(
-            'sharedMaxAge' => $node->getHeader($locale, 's-maxage'),
-            'maxAge' => $node->getHeader($locale, 'max-age'),
-            'noCache' => $node->get('cache.disabled'),
-            'maxAgeShow' => $node->get('cache.maxage.enabled'),
-            'sharedMaxAgeShow' => $node->get('cache.sharedmaxage.enabled')
+            'cacheTarget' => $cache,
+            'sharedMaxAge' => in_array($cache, ['intermediate', 'all']) ? $node->getHeader($locale, 's-maxage') : null,
+            'maxAge' => $cache == 'all' ? $node->getHeader($locale, 'max-age') : ($cache == 'intermediate' ? 0 : null),
         );
 
         $formHeaders = $this->createFormBuilder($data);
         $formHeaders->setAction('headers');
 
-        $formHeaders->addRow('maxAgeShow', 'option', array(
-            'label' => $translator->translate('label.age.max.show'),
-            'description' => $translator->translate('label.age.max.show.description'),
+        $formHeaders->addRow('cacheTarget', 'option', array(
+            'label' => $translator->translate('label.cache.target'),
+            'options' => $this->getCacheOptions($node, $translator, $locale),
             'attributes' => array(
-                'data-toggle-dependant' => 'option-maxage',
+                'data-toggle-dependant' => 'option-cachetarget',
             ),
-        ));
-        $formHeaders->addRow('maxAge', 'number', array(
-            'label' => $translator->translate('label.age.max'),
-            'description' => $translator->translate('label.age.max.description'),
             'validators' => array(
-                'minmax' => array(
-                    'minimum' => 0,
-                ),
-            ),
-            'attributes' => array(
-                'class' => 'option-maxage option-maxage-1',
+                'required' => array(),
             ),
         ));
 
-        $formHeaders->addRow('sharedMaxAgeShow', 'option', array(
-            'label' => $translator->translate('label.age.sharedmax.show'),
-            'description' => $translator->translate('label.age.sharedmax.show.description'),
+        $formHeaders->addRow('maxAge', 'select', array(
+            'label' => $translator->translate('label.header.maxage'),
+            'description' => $translator->translate('label.header.maxage.description'),
+            'options' => $this->getTimeOptions(0, 3600, $translator),
             'attributes' => array(
-                'data-toggle-dependant' => 'option-sharedmax',
+                'class' => 'option-cachetarget option-cachetarget-all',
             ),
         ));
 
-        $formHeaders->addRow('sharedMaxAge', 'number', array(
-            'label' => $translator->translate('label.sharedage.max'),
-            'description' => $translator->translate('label.age.sharedmax.description'),
-            'validators' => array(
-                'minmax' => array(
-                    'minimum' => 0,
-                ),
-            ),
+        $formHeaders->addRow('sharedMaxAge', 'select', array(
+            'label' => $translator->translate('label.header.smaxage'),
+            'description' => $translator->translate('label.header.smaxage.description'),
+            'options' => $this->getTimeOptions(0, 31536000, $translator),
             'attributes' => array(
-                'class' => 'option-sharedmax option-sharedmax-1',
+                'class' => 'option-cachetarget option-cachetarget-intermediate option-cachetarget-all',
             ),
         ));
-
-        $formHeaders->addRow('noCache', 'option', array(
-            'label' => $translator->translate('label.no.cache'),
-            'description' => $translator->translate('label.no.cache.description')
-            )
-        );
 
         $formHeaders = $formHeaders->build();
         if ($formHeaders->isSubmitted()) {
@@ -117,11 +116,10 @@ class VarnishNodeAction extends AbstractNodeAction {
 
                 $data = $formHeaders->getData();
 
-                $node->set('cache.disabled', $data['noCache'] ? $data['noCache'] : 0);
-                $node->set('cache.maxage.enabled', $data['maxAgeShow'] ? $data['maxAgeShow'] : 0);
-                $node->set('cache.sharedmaxage.enabled', $data['sharedMaxAgeShow'] ? $data['sharedMaxAgeShow'] : 0);
-                $node->setHeader($locale, 's-maxage', $data['sharedMaxAgeShow'] ? $data['sharedMaxAge'] : null);
-                $node->setHeader($locale, 'max-age', $data['maxAgeShow'] ? $data['maxAge'] : null);
+                $node->set('cache.target', $data['cacheTarget']);
+
+                $node->setHeader($locale, 'max-age', $data['cacheTarget'] == 'all' ? $data['maxAge'] : ($data['cacheTarget'] == 'intermediate' ? 0 : ($data['cacheTarget'] == 'inherit' ? null : '')));
+                $node->setHeader($locale, 's-maxage', in_array($data['cacheTarget'], ['intermediate', 'all']) ? $data['sharedMaxAge'] : ($data['cacheTarget'] == 'inherit' ? null : ''));
                 $node->setHeader($locale, 'Expires', 'Thu, 05 Apr 1984 18:00:00 GMT');
 
                 $cms->saveNode($node, "Set cache properties for " . $node->getName());
@@ -178,4 +176,84 @@ class VarnishNodeAction extends AbstractNodeAction {
         ));
     }
 
+    /**
+     * Gets the cache value
+     * @param string $security Form value
+     * @return null|string
+     */
+    private function getCacheValue($cacheTarget) {
+        if ($cacheTarget == 'inherit') {
+            return null;
+        } else {
+            return $cacheTarget;
+        }
+    }
+
+    /**
+     * Gets the cache options
+     * @param \ride\library\cms\node\Node $node
+     * @param \ride\library\i18n\translator\Translator $translator
+     * @return array Array with the cache code as key and the translation as
+     * value
+     */
+    protected function getCacheOptions(Node $node, $translator, $locale) {
+        $options = array();
+
+        $parentNode = $node->getParentNode();
+        if ($parentNode) {
+            $options['inherit'] = $translator->translate('label.inherited') . $this->getInheritedCacheOption($parentNode, $translator, $locale);
+        }
+
+        $options['none'] = $translator->translate('label.cache.target.none');
+        $options['intermediate'] = $translator->translate('label.cache.target.intermediate');
+        $options['all'] = $translator->translate('label.cache.target.all');
+
+        return $options;
+    }
+
+    /**
+     * Gets the inherited cache options
+     * @param \ride\library\cms\node\Node $parentNode
+     * @param \ride\library\i18n\translator\Translator $translator
+     * @param $locale
+     *
+     * @return string
+     */
+    protected function getInheritedCacheOption( Node $parentNode, $translator, $locale) {
+        $value = $parentNode->get('cache.target', null, true, true);
+        $maxAge = $parentNode->getHeader($locale, 'max-age');
+        $sharedMaxAge = $parentNode->getHeader($locale, 's-maxage');
+
+        if(empty($value)) {
+            return "";
+        }
+
+        $suffix = ' (';
+        $suffix .= $translator->translate('label.cache.target.' . $value);
+        $suffix .= in_array($value, ['inherit', 'all']) ? ', ' . $translator->translate('label.header.maxage') . ': ' . $translator->translate('label.cache.time.' . $maxAge) : null;
+        $suffix .= in_array($value, ['inherit', 'intermediate', 'all']) ? ', ' . $translator->translate('label.header.smaxage') . ': ' . $translator->translate('label.cache.time.' . $sharedMaxAge) : null;
+        $suffix .= ')';
+
+        return $suffix;
+    }
+
+    /**
+     * Gets the time options between a given range
+     * @param $min
+     * @param $max
+     * @param $translator
+     *
+     * @return array
+     */
+    protected function getTimeOptions($min, $max, $translator) {
+        $options = array();
+
+        foreach($this->times as $time) {
+            if($time >= $min && $time <= $max) {
+                $options[$time] = $translator->translate('label.cache.time.' . $time);
+            }
+        }
+
+        return $options;
+    }
 }
