@@ -18,6 +18,7 @@
     "label.cache.time.7884000": "3 maanden",
     "label.cache.time.15768000": "6 maanden",
     "label.cache.time.31536000": "1 jaar",
+    "label.cache.time.end.day": "Einde van de dag",
     "label.header.maxage": "max-age header waarde",
     "label.header.maxage.description": "Maximum browser cache tijd in seconden voor deze pagina",
     "label.header.smaxage": "s-maxage header waarde",

@@ -2,7 +2,7 @@
     "name": "ride/wba-cms-varnish",
     "description": "CMS actions for Varnish cache",
     "license": "MIT",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "authors": [
         {
             "name": "Joris Vandeweerd",
@@ -17,7 +17,7 @@
         "ride/lib-cms": ">=0.24.2",
         "ride/lib-i18n": ">=0.1.4",
         "ride/lib-validation": ">=0.7.2",
-        "ride/web-cms": ">=0.26.6",
+        "ride/web-cms": ">=0.30.13",
         "ride/web-cms-varnish": ">=0.1.0"
     },
     "autoload": {
