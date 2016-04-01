@@ -18,6 +18,7 @@
     "label.cache.time.7884000": "3 months",
     "label.cache.time.15768000": "6 months",
     "label.cache.time.31536000": "1 year",
+    "label.cache.time.end.day": "End of the day",
     "label.header.maxage": "max-age header value",
     "label.header.maxage.description": "Maximum browser cache age for this page in seconds",
     "label.header.smaxage": "s-maxage header value",
