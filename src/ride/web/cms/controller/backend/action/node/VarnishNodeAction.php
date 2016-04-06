@@ -76,61 +76,66 @@ class VarnishNodeAction extends AbstractNodeAction {
             'sharedMaxAge' => in_array($cache, array('intermediate', 'all')) ? $node->getHeader($locale, 's-maxage') : null,
             'maxAge' => $cache == 'all' ? $node->getHeader($locale, 'max-age') : ($cache == 'intermediate' ? 0 : null),
         );
+        $formHeaders = null;
+        if ($this->isPermissionGranted('cms.node.varnish.manage')) {
+            $formHeaders = $this->createFormBuilder($data);
+            $formHeaders->setAction('headers');
+            $formHeaders->addRow('cacheTarget', 'option', array(
+                'label' => $translator->translate('label.cache.target'),
+                'options' => $this->getCacheOptions($node, $translator, $locale),
+                'attributes' => array(
+                    'data-toggle-dependant' => 'option-cachetarget',
+                ),
+                'validators' => array(
+                    'required' => array(),
+                ),
+            ));
+            $formHeaders->addRow('maxAge', 'select', array(
+                'label' => $translator->translate('label.header.maxage'),
+                'description' => $translator->translate('label.header.maxage.description'),
+                'options' => $this->getTimeOptions($translator, 0, 3600),
+                'attributes' => array(
+                    'class' => 'option-cachetarget option-cachetarget-all',
+                ),
+            ));
+            $formHeaders->addRow('sharedMaxAge', 'select', array(
+                'label' => $translator->translate('label.header.smaxage'),
+                'description' => $translator->translate('label.header.smaxage.description'),
+                'options' => $this->getTimeOptions($translator, 0, 31536000),
+                'attributes' => array(
+                    'class' => 'option-cachetarget option-cachetarget-intermediate option-cachetarget-all',
+                ),
+            ));
 
-        $formHeaders = $this->createFormBuilder($data);
-        $formHeaders->setAction('headers');
-        $formHeaders->addRow('cacheTarget', 'option', array(
-            'label' => $translator->translate('label.cache.target'),
-            'options' => $this->getCacheOptions($node, $translator, $locale),
-            'attributes' => array(
-                'data-toggle-dependant' => 'option-cachetarget',
-            ),
-            'validators' => array(
-                'required' => array(),
-            ),
-        ));
-        $formHeaders->addRow('maxAge', 'select', array(
-            'label' => $translator->translate('label.header.maxage'),
-            'description' => $translator->translate('label.header.maxage.description'),
-            'options' => $this->getTimeOptions($translator, 0, 3600),
-            'attributes' => array(
-                'class' => 'option-cachetarget option-cachetarget-all',
-            ),
-        ));
-        $formHeaders->addRow('sharedMaxAge', 'select', array(
-            'label' => $translator->translate('label.header.smaxage'),
-            'description' => $translator->translate('label.header.smaxage.description'),
-            'options' => $this->getTimeOptions($translator, 0, 31536000),
-            'attributes' => array(
-                'class' => 'option-cachetarget option-cachetarget-intermediate option-cachetarget-all',
-            ),
-        ));
+            $formHeaders = $formHeaders->build();
+            if ($formHeaders->isSubmitted()) {
+                try {
+                    $formHeaders->validate();
 
-        $formHeaders = $formHeaders->build();
-        if ($formHeaders->isSubmitted()) {
-            try {
-                $formHeaders->validate();
+                    $data = $formHeaders->getData();
 
-                $data = $formHeaders->getData();
+                    $node->set('cache.target', $data['cacheTarget']);
+                    $node->setHeader($locale, 'max-age', $data['cacheTarget'] == 'all' ? $data['maxAge'] : ($data['cacheTarget'] == 'intermediate' ? 0 : ($data['cacheTarget'] == 'inherit' ? null : '')));
+                    $node->setHeader($locale, 's-maxage', in_array($data['cacheTarget'], ['intermediate', 'all']) ? $data['sharedMaxAge'] : ($data['cacheTarget'] == 'inherit' ? null : ''));
+                    $node->setHeader($locale, 'Expires', 'Wed, 06 Jul 1983 5:00:00 GMT');
 
-                $node->set('cache.target', $data['cacheTarget']);
-                $node->setHeader($locale, 'max-age', $data['cacheTarget'] == 'all' ? $data['maxAge'] : ($data['cacheTarget'] == 'intermediate' ? 0 : ($data['cacheTarget'] == 'inherit' ? null : '')));
-                $node->setHeader($locale, 's-maxage', in_array($data['cacheTarget'], ['intermediate', 'all']) ? $data['sharedMaxAge'] : ($data['cacheTarget'] == 'inherit' ? null : ''));
-                $node->setHeader($locale, 'Expires', 'Wed, 06 Jul 1983 5:00:00 GMT');
+                    $cms->saveNode($node, "Set cache properties for " . $node->getName());
 
-                $cms->saveNode($node, "Set cache properties for " . $node->getName());
+                    $this->addSuccess('success.node.saved', array(
+                        'node' => $site->getName($locale)
+                    ));
 
-                $this->addSuccess('success.node.saved', array(
-                    'node' => $site->getName($locale)
-                ));
+                    $this->response->setRedirect($referer);
 
-                $this->response->setRedirect($referer);
-
-                return;
-            } catch (ValidationException $exception) {
-                $this->setValidationException($exception, $formHeaders);
+                    return;
+                } catch (ValidationException $exception) {
+                    $this->setValidationException($exception, $formHeaders);
+                }
             }
+
+            $formHeaders = $formHeaders->getView();
         }
+
 
         $formClear = $this->createFormBuilder();
         $formClear->setAction('clear');
@@ -164,7 +169,7 @@ class VarnishNodeAction extends AbstractNodeAction {
         $this->setTemplateView('cms/backend/node.varnish', array(
             'site' => $site,
             'node' => $node,
-            'formHeaders' => $formHeaders->getView(),
+            'formHeaders' => $formHeaders,
             'formClear' => $formClear->getView(),
             'referer' => $referer,
             'locale' => $locale,
