@@ -231,8 +231,8 @@ class VarnishNodeAction extends AbstractNodeAction {
 
         $suffix = ' (';
         $suffix .= $translator->translate('label.cache.target.' . $value);
-        $suffix .= in_array($value, ['inherit', 'all']) ? ', ' . $translator->translate('label.header.maxage') . ': ' . $translator->translate('label.cache.time.' . $maxAge) : null;
-        $suffix .= in_array($value, ['inherit', 'intermediate', 'all']) ? ', ' . $translator->translate('label.header.smaxage') . ': ' . $translator->translate('label.cache.time.' . $sharedMaxAge) : null;
+        $suffix .= in_array($value, array('inherit', 'all')) ? ', ' . $translator->translate('label.header.maxage') . ': ' . $translator->translate('label.cache.time.' . $maxAge) : null;
+        $suffix .= in_array($value, array('inherit', 'intermediate', 'all')) ? ', ' . $translator->translate('label.header.smaxage') . ': ' . $translator->translate('label.cache.time.' . $sharedMaxAge) : null;
         $suffix .= ')';
 
         return $suffix;
