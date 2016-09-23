@@ -116,7 +116,7 @@ class VarnishNodeAction extends AbstractNodeAction {
 
                     $node->set('cache.target', $data['cacheTarget']);
                     $node->setHeader($locale, 'max-age', $data['cacheTarget'] == 'all' ? $data['maxAge'] : ($data['cacheTarget'] == 'intermediate' ? 0 : ($data['cacheTarget'] == 'inherit' ? null : '')));
-                    $node->setHeader($locale, 's-maxage', in_array($data['cacheTarget'], ['intermediate', 'all']) ? $data['sharedMaxAge'] : ($data['cacheTarget'] == 'inherit' ? null : ''));
+                    $node->setHeader($locale, 's-maxage', in_array($data['cacheTarget'], array('intermediate', 'all')) ? $data['sharedMaxAge'] : ($data['cacheTarget'] == 'inherit' ? null : ''));
                     $node->setHeader($locale, 'Expires', 'Wed, 06 Jul 1983 5:00:00 GMT');
 
                     $cms->saveNode($node, "Set cache properties for " . $node->getName());
